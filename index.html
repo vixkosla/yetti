@@ -67,11 +67,12 @@
             // необходимо добавить id инпутов в переменные ниже 
             const inputOneName = 'input1'
             const inputTwoName = 'input2'
-            const inputThreename = 'input3'
+            const inputThreeName = 'input3'
+            const buttonPassword = 'showPassword'
 
             // console.log(rive);
             const riveInstance = new rive.Rive({
-              src: "./public/rive/dragon.riv",
+              src: './public/rive/dragon.riv',
               canvas: document.getElementById('rive-canvas'),
               autoplay: true,
               artboard: 'drakosha',
@@ -80,7 +81,12 @@
                 console.error('Ошибка загрузки Rive', e);
               },
               onLoad: () => {
+                console.log('Rive file loaded successfully!');
+                riveInstance.drawFrame();
                 const stateMachine = riveInstance.stateMachineInputs('StateMachine');
+
+                // riveInstance
+                // console.log(stateMachine);
 
                 const eyesPositionInput = stateMachine.find(input => input.name === 'eyesPosition');
                 const textLengthInput = stateMachine.find(input => input.name === 'textLength');
@@ -151,7 +157,7 @@
                 });
 
                         
-                document.getElementById('inputThreeName').addEventListener('focus', () => {
+                document.getElementById(inputThreeName).addEventListener('focus', () => {
                     console.log('Focus input3')
 
                     if (stateHandsInput.value == -1) {
@@ -159,12 +165,12 @@
                   }
                 });
 
-                document.getElementById('inputThreeName').addEventListener('input', () => {
+                document.getElementById(inputThreeName).addEventListener('input', () => {
 
                   console.log('Focus input3')
                 });
 
-                document.getElementById('inputThreeName').addEventListener('blur', (e) => {
+                document.getElementById(inputThreeName).addEventListener('blur', (e) => {
 
                     // console.log()
                     // const target = e.relatedTarget || null;
@@ -178,7 +184,7 @@
 
                 });
 
-                document.getElementById('showPassword').addEventListener('mousedown', (e) => {
+                document.getElementById(buttonPassword).addEventListener('mousedown', (e) => {
                     // setTimeout(() => {
                         e.preventDefault();
                         const value = stateHandsInput.value;
