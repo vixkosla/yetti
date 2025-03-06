@@ -76,6 +76,8 @@
               canvas: document.getElementById('rive-canvas'),
               autoplay: true,
               artboard: 'drakosha',
+              fit: rive.Fit.contain,  // Заполняет canvas без искажения пропорций
+              renderer: "webgl", // Принудительное использование WebGL
               useOffscreenRenderer: true, // Включает WebGL
               stateMachines: 'StateMachine', // Название State Machine
               onError: (e) => {
@@ -85,6 +87,23 @@
                 console.log('Rive file loaded successfully!');
                 riveInstance.drawFrame();
                 const stateMachine = riveInstance.stateMachineInputs('StateMachine');
+
+                const canvas = document.getElementById("rive-canvas");
+                console.log(canvas)
+                const ctx = canvas.getContext("2d");
+                console.log(ctx)
+                const dpr = Math.max(window.devicePixelRatio, 1);
+                console.log(window.devicePixelRatio)
+                console.log(dpr)
+                
+
+                console.log(WebGLRenderingContext ? "WebGL доступен" : "WebGL отключен");
+                console.log(riveInstance.runtime); // Должно вывести "WebGL"
+                console.log(riveInstance.runtime.rendererType); // Должно вывести "WebGL"
+
+                canvas.width = canvas.clientWidth * dpr;
+                canvas.height = canvas.clientHeight * dpr;
+                ctx.scale(dpr, dpr); // Масштабируем контекст
 
                 // riveInstance
                 // console.log(stateMachine);
@@ -102,6 +121,24 @@
                 let textProgressOne = 0;
                 let textProgressTwo = 0;
                 let isPasswordInputFocused = false;
+
+                window.addEventListener('resize', () => {
+                    console.log('Resize page')
+                    console.log(canvas.getBoundingClientRect())
+                    console.log(window.devicePixelRatio)
+
+                    const dpr = window.devicePixelRatio || 1;
+                    const rect = canvas.getBoundingClientRect();
+
+                    canvas.width = rect.width * dpr;
+                    canvas.height = rect.height * dpr;
+                    canvas.style.width = `${rect.width}px`;
+                    canvas.style.height = `${rect.height}px`;
+
+                    if (riveInstance) {
+                        riveInstance.resizeToCanvas();
+                    }
+                })
 
                 // Назначаем обработчики для инпутов
                 document.getElementById(inputOneName).addEventListener('focus', () => {
