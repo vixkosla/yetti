@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <style>
+            html, body {
+                font-size: 12px;
+            }
+
+            .svg-container {
+                /* margin: 0 auto; */
+                display: flex;
+                justify-content: center;                
+                align-items: center;
+            }
+
+            #rive-canvas {
+                /* max-width: 500px; */
+            }
+        
+            .container {
+                /* padding-top: 50vh; */
+            }
+        
+            .form-container {
+
+                max-width: 200px;
+                margin: 0 auto;
+                padding-top: 10vh;
+            }
+        
+            label {
+                display: block;
+                margin-bottom: 2px;
+            }
+        
+            input {
+                margin-bottom: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="svg-container">
+                <canvas id="rive-canvas" width="200" height="200"></canvas>
+            </div>
+            <div class="form-container">
+                <div class="name">
+                    <label for="name">Имя</label>
+                    <input id="input1" type="text">
+                </div>
+                <div class="last-name">
+                    <label for="lastName">Фамилия</label>
+                    <input id="input2" type="text">
+                </div>
+                <div class="password">
+                    <label for="password">Пароль</label>
+                    <button id="showPassword">Показать</button>
+                    <input id="input3" type="text">
+                </div>
+            </div>
+        </div>
+        <script src="./public/js/rive.js"></script>
+        <script>
+            // необходимо добавить id инпутов в переменные ниже 
+            const inputOneName = 'input1'
+            const inputTwoName = 'input2'
+            const inputThreename = 'input3'
+
+            // console.log(rive);
+            const riveInstance = new rive.Rive({
+              src: "./public/rive/dragon.riv",
+              canvas: document.getElementById('rive-canvas'),
+              autoplay: true,
+              artboard: 'drakosha',
+              stateMachines: 'StateMachine', // Название State Machine
+              onError: (e) => {
+                console.error('Ошибка загрузки Rive', e);
+              },
+              onLoad: () => {
+                const stateMachine = riveInstance.stateMachineInputs('StateMachine');
+
+                const eyesPositionInput = stateMachine.find(input => input.name === 'eyesPosition');
+                const textLengthInput = stateMachine.find(input => input.name === 'textLength');
+                const isMouthOpenInput = stateMachine.find(input => input.name === 'isMouthOpen');
+                const stateHandsInput = stateMachine.find(input => input.name === 'stateHands');
+                
+                // Начальная установка
+                eyesPositionInput.value = 0;
+                stateHandsInput.value = -1;
+                isMouthOpenInput.value = false;
+
+                let textProgressOne = 0;
+                let textProgressTwo = 0;
+                let isPasswordInputFocused = false;
+
+                // Назначаем обработчики для инпутов
+                document.getElementById(inputOneName).addEventListener('focus', () => {
+
+                    if (textProgressOne > 0) {
+                        eyesPositionInput.value = 3;
+                        textLengthInput.value = textProgressOne;
+                    } else {
+                        eyesPositionInput.value = 1;
+                    }
+
+                });
+
+                document.getElementById(inputOneName).addEventListener('input', (event) => {
+                    const value = parseFloat(event.target.value.length);
+                    if (value > 0 || textProgressTwo > 0) {
+                    isMouthOpenInput.value = true;
+                    } else {
+                    isMouthOpenInput.value = false;
+                    }
+                    console.log(value)
+                    const normalizedValue = Math.min(value / 40 * 100, 100);
+
+                    textProgressOne = normalizedValue;
+                    console.log(textProgressOne)
+
+                    eyesPositionInput.value = 3;
+                    textLengthInput.value = textProgressOne;
+                });
+
+                document.getElementById(inputOneName).addEventListener('blur', () => {
+                    eyesPositionInput.value = 0;
+
+                });
+        
+                document.getElementById(inputTwoName).addEventListener('focus', () => {
+                    eyesPositionInput.value = 2;
+
+                });
+
+                document.getElementById(inputTwoName).addEventListener('input', () => {
+                const value = parseFloat(event.target.value.length);
+                if (value > 0 || textProgressOne > 0) {
+                    isMouthOpenInput.value = true;
+                } else {
+                    isMouthOpenInput.value = false;
+                }
+
+                });
+
+                document.getElementById(inputTwoName).addEventListener('blur', () => {
+                    eyesPositionInput.value = 0;
+
+                });
+
+                        
+                document.getElementById('inputThreeName').addEventListener('focus', () => {
+                    console.log('Focus input3')
+
+                    if (stateHandsInput.value == -1) {
+                    stateHandsInput.value = 1;
+                  }
+                });
+
+                document.getElementById('inputThreeName').addEventListener('input', () => {
+
+                  console.log('Focus input3')
+                });
+
+                document.getElementById('inputThreeName').addEventListener('blur', (e) => {
+
+                    // console.log()
+                    // const target = e.relatedTarget || null;
+
+
+
+                    // if (target.id != 'showPassword') {
+                        stateHandsInput.value = -1;
+                        console.log('blur input3');
+                    // }
+
+                });
+
+                document.getElementById('showPassword').addEventListener('mousedown', (e) => {
+                    // setTimeout(() => {
+                        e.preventDefault();
+                        const value = stateHandsInput.value;
+
+                        if (value == -1) {
+                            return;
+                        }
+
+                        console.log(value);
+
+                        if (value == 1 || value == 4) {
+                            console.log('open one eye')
+                            stateHandsInput.value = 3
+                        } else if (value == 3) {
+                            console.log('close one eye')
+                            stateHandsInput.value = 4
+                        }
+                        console.log('click');
+
+                        // document.getElementById('input3').focus();
+                    // }, 0);
+                });
+
+
+              },
+            });
+        </script>
+    </body>
+</html>
