@@ -70,6 +70,8 @@
             const inputThreeName = 'input3'
             const buttonPassword = 'showPassword'
 
+            const numberOfSymbols = 30;
+
             // console.log(rive);
             const riveInstance = new rive.Rive({
               src: './dragon.riv',
@@ -110,6 +112,7 @@
 
                 const eyesPositionInput = stateMachine.find(input => input.name === 'eyesPosition');
                 const textLengthInput = stateMachine.find(input => input.name === 'textLength');
+                const textLength2Input = stateMachine.find(input => input.name === 'secondTextLength');
                 const isMouthOpenInput = stateMachine.find(input => input.name === 'isMouthOpen');
                 const stateHandsInput = stateMachine.find(input => input.name === 'stateHands');
                 
@@ -143,12 +146,12 @@
                 // Назначаем обработчики для инпутов
                 document.getElementById(inputOneName).addEventListener('focus', () => {
 
-                    if (textProgressOne > 0) {
-                        eyesPositionInput.value = 3;
-                        textLengthInput.value = textProgressOne;
-                    } else {
+                    // if (textProgressOne > 0) {
+                    //     eyesPositionInput.value = 3;
+                    //     textLengthInput.value = textProgressOne;
+                    // } else {
                         eyesPositionInput.value = 1;
-                    }
+                    // }
 
                 });
 
@@ -160,7 +163,7 @@
                     isMouthOpenInput.value = false;
                     }
                     console.log(value)
-                    const normalizedValue = Math.min(value / 40 * 100, 100);
+                    const normalizedValue = Math.min(value / numberOfSymbols * 100, 100);
 
                     textProgressOne = normalizedValue;
                     console.log(textProgressOne)
@@ -186,6 +189,12 @@
                 } else {
                     isMouthOpenInput.value = false;
                 }
+
+                const normalizedValue = Math.min(value / numberOfSymbols * 100, 100);
+                textProgressTwo = normalizedValue;
+
+                eyesPositionInput.value = 4;
+                textLength2Input.value = textProgressTwo;
 
                 });
 
